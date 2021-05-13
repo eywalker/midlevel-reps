@@ -15,7 +15,9 @@ default_device = "cuda" if torch.cuda.is_available() else "cpu"
 TASKONOMY_LOCATION = "https://github.com/StanfordVL/taskonomy/tree/master/taskbank"
 
 
-def representation_transform(img, feature_task="normal", device=default_device):
+def representation_transform(
+    img, feature_task="normal", device=default_device, no_grad=True
+):
     """
     Transforms an RGB image into a feature driven by some vision task
         Expects inputs:
@@ -25,12 +27,12 @@ def representation_transform(img, feature_task="normal", device=default_device):
             shape  (batch_size, 8, 16, 16)
     """
     return VisualPrior.to_representation(
-        img, feature_tasks=[feature_task], device=device
+        img, feature_tasks=[feature_task], device=device, no_grad=no_grad
     )
 
 
 def multi_representation_transform(
-    img, feature_tasks=["normal"], device=default_device
+    img, feature_tasks=["normal"], device=default_device, no_grad=True
 ):
     """
     Transforms an RGB image into a features driven by some vision tasks
@@ -40,7 +42,7 @@ def multi_representation_transform(
         Outputs:
             shape  (batch_size, 8, 16, 16)
     """
-    return VisualPrior.to_representation(img, feature_tasks, device)
+    return VisualPrior.to_representation(img, feature_tasks, device, no_grad=no_grad)
 
 
 def max_coverage_featureset_transform(img, k=4, device=default_device):
@@ -62,7 +64,7 @@ def max_coverage_featureset_transform(img, k=4, device=default_device):
     return VisualPrior.max_coverage_transform(img, k, device)
 
 
-def feature_readout(img, feature_task="normal", device=default_device):
+def feature_readout(img, feature_task="normal", device=default_device, no_grad=True):
     """
     Transforms an RGB image into a feature driven by some vision task,
     then returns the result of a readout of the feature.
@@ -73,11 +75,13 @@ def feature_readout(img, feature_task="normal", device=default_device):
             shape  (batch_size, 8, 16, 16)
     """
     return VisualPrior.to_predicted_label(
-        img, feature_tasks=[feature_task], device=device
+        img, feature_tasks=[feature_task], device=device, no_grad=no_grad
     )
 
 
-def multi_feature_readout(img, feature_tasks=["normal"], device=default_device):
+def multi_feature_readout(
+    img, feature_tasks=["normal"], device=default_device, no_grad=True
+):
     """
     Transforms an RGB image into a features driven by some vision tasks
     then returns the readouts of the features.
@@ -87,7 +91,7 @@ def multi_feature_readout(img, feature_tasks=["normal"], device=default_device):
         Outputs:
             shape  (batch_size, 8, 16, 16)
     """
-    return VisualPrior.to_predicted_label(img, feature_tasks, device)
+    return VisualPrior.to_predicted_label(img, feature_tasks, device, no_grad=no_grad)
 
 
 class VisualPrior(object):
